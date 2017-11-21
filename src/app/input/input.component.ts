@@ -88,7 +88,7 @@ toggleFile() {
   this.totalFiles = 0;
   this.completed = 0;
   this.hashes = [];
-  this.file.length = [];
+  this.file = [];
   this.showUpdate = false;
 
 }
@@ -124,18 +124,22 @@ upload = ($event) => {
     this.name = concatName;
     this.parentSize = concatSize;
     file.forEach( (el, key) => {
-      this.ipfsService.uploadIPFS(el)
-      .then((torrent) => {
-        try {
-          this.hashes.push(torrent);
-          this.file.push('<br>' + 'https://ipfs.io/ipfs/' + this.hashes[key].hash + '<br><br>');
-          this.data.hashes = (this.file)
-        } catch (e) {
-          console.log('ERROR:', e)
-        }
-      }).then(() => {
-        this.completed++
-      });
+      try {
+        this.ipfsService.uploadIPFS(el)
+        .then((torrent) => {
+          try {
+            this.hashes.push(torrent);
+            this.file.push('<br>' + 'https://ipfs.io/ipfs/' + this.hashes[key].hash + '<br><br>');
+            this.data.hashes = (this.file)
+          } catch (e) {
+            console.log('ERROR:', e)
+          }
+        }).then(() => {
+          this.completed++
+        });
+      } catch (e) {
+        console.log('Repeated File!', e)
+      }
     })
   }
   else {
